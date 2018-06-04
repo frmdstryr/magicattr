@@ -1,5 +1,8 @@
 # Magicattr
 
+[![Build Status](https://travis-ci.org/frmdstryr/magicattr.svg?branch=master)](https://travis-ci.org/frmdstryr/magicattr)
+
+
 A getattr and setattr that works on nested objects, lists, 
 dictionaries, and any combination thereof without resorting to eval.
 
@@ -64,7 +67,7 @@ assert bob.age == 32
 
 You can also delete like this too.
 
-```'python
+```python
 
 # Deletion
 magicattr.delete(jill, 'friends[0]')

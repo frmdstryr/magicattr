@@ -5,7 +5,7 @@ python:
   - "3.6"
 
 install:
-  - pip install codecov
+  - pip install codecov pytest-codecov
 
 script:
   - pytest -v tests.py --cov magicattr --cov-report xml
