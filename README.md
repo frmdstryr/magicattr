@@ -60,11 +60,11 @@ assert magicattr.get(jack, 'friends[0].friends[0]') == jack
 
 magicattr.set(jill, 'friends[0].age', 32)
 assert bob.age == 32
-'''
+```
 
 You can also delete like this too.
 
-'''python
+```'python
 
 # Deletion
 magicattr.delete(jill, 'friends[0]')
@@ -76,11 +76,11 @@ assert not hasattr(jill, 'age')
 magicattr.delete(bob, 'friends[0].age')
 assert not hasattr(jack, 'age')
 
-'''
+```
 
 What if someone tries to mess with you?
 
-'''python
+```python
 
 # Unsupported
 with pytest.raises(NotImplementedError) as e:
@@ -92,12 +92,14 @@ with pytest.raises(ValueError):
 
 ```
 
+Did I miss anything? Let me know!
+
+
 
 #### What it can't do?
 
 Slicing, expressions, function calls, append/pop from lists, eval stuff, etc...
 
-Did I mess anything? Let me know!
 
 #### How does it work?
 
