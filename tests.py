@@ -94,8 +94,24 @@ def test_person_example():
 
     # Unsupported
     with pytest.raises(NotImplementedError) as e:
-        assert magicattr.get(bob, 'friends[0+1]') == jill
+        magicattr.get(bob, 'friends[0+1]')
 
     # Nice try, function calls are not allowed
     with pytest.raises(ValueError):
-        assert magicattr.get(bob, 'friends.pop(0)') == bob.friends.pop
+        magicattr.get(bob, 'friends.pop(0)')
+
+    # Must be an expression
+    with pytest.raises(ValueError):
+        magicattr.get(bob, 'friends = []')
+
+    # Must be an expression
+    with pytest.raises(SyntaxError):
+        magicattr.get(bob, 'friends..')
+
+    # Must be an expression
+    with pytest.raises(KeyError):
+        magicattr.get(bob, 'settings["DoesNotExist"]')
+
+    # Must be an expression
+    with pytest.raises(IndexError):
+        magicattr.get(bob, 'friends[100]')

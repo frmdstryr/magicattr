@@ -31,9 +31,7 @@ def get(obj, attr):
     result: Object
         The object retrieved
     """
-    node = ast.parse(attr).body[0]
-    path = reversed([n for n in ast.walk(node) if isinstance(n, _AST_TYPES)])
-    return reduce(_lookup, path, obj)
+    return reduce(_lookup, _parse(attr), obj)
 
 
 def set(obj, attr, val):
@@ -50,14 +48,12 @@ def set(obj, attr, val):
         The value to set
         
     """
-    node = ast.parse(attr).body[0]
-    path = tuple(reversed([n for n in ast.walk(node)
-                           if isinstance(n, _AST_TYPES)]))
-    if len(path) > 1:
-        obj = reduce(_lookup, path[:-1], obj)
-        node = path[-1]
+    nodes = tuple(_parse(attr))
+    if len(nodes) > 1:
+        obj = reduce(_lookup, nodes[:-1], obj)
+        node = nodes[-1]
     else:
-        node = path[0]
+        node = nodes[0]
 
     if isinstance(node, ast.Attribute):
         return setattr(obj, node.attr, val)
@@ -80,14 +76,12 @@ def delete(obj, attr):
     attr: String
         A attribute string to lookup
     """
-    node = ast.parse(attr).body[0]
-    path = tuple(reversed([n for n in ast.walk(node)
-                           if isinstance(n, _AST_TYPES)]))
-    if len(path) > 1:
-        obj = reduce(_lookup, path[:-1], obj)
-        node = path[-1]
+    nodes = tuple(_parse(attr))
+    if len(nodes) > 1:
+        obj = reduce(_lookup, nodes[:-1], obj)
+        node = nodes[-1]
     else:
-        node = path[0]
+        node = nodes[0]
 
     if isinstance(node, ast.Attribute):
         return delattr(obj, node.attr)
@@ -97,6 +91,25 @@ def delete(obj, attr):
     elif isinstance(node, ast.Name):
         return delattr(obj, node.id)
     raise NotImplementedError("Node is not supported: %s"%node)
+
+
+def _parse(attr):
+    """ Parse and validate an attr string 
+    
+    Parameters
+    ----------
+    attr: String
+    
+    Returns
+    -------
+    nodes: List
+        List of ast nodes
+    
+    """
+    node = ast.parse(attr).body[0]
+    if not isinstance(node, ast.Expr):
+        raise ValueError("Invalid expression: {}".format(attr))
+    return reversed([n for n in ast.walk(node) if isinstance(n, _AST_TYPES)])
 
 
 def _lookup_subscript_value(node):

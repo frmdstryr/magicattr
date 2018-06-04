@@ -7,6 +7,10 @@
 A getattr and setattr that works on nested objects, lists, 
 dictionaries, and any combination thereof without resorting to eval.
 
+It differs from getattr and setattr in that it retains the failure cause 
+instead of always raising an AttributeError.
+
+
 
 ### Example
 
@@ -88,11 +92,17 @@ What if someone tries to mess with you?
 
 # Unsupported
 with pytest.raises(NotImplementedError) as e:
-    assert magicattr.get(bob, 'friends[0+1]') == jill
+    magicattr.get(bob, 'friends[0+1]')
+
+with pytest.raises(SyntaxError) as e:
+    magicattr.get(bob, 'friends[')
+    
+with pytest.raises(ValueError) as e:
+    magicattr.get(bob, 'friends = [1,1]')
 
 # Nice try, function calls are not allowed
 with pytest.raises(ValueError):
-    assert magicattr.get(bob, 'friends.pop(0)') == bob.friends.pop
+    magicattr.get(bob, 'friends.pop(0)')
 
 ```
 
@@ -103,7 +113,6 @@ Did I miss anything? Let me know!
 #### What it can't do?
 
 Slicing, expressions, function calls, append/pop from lists, eval stuff, etc...
-
 
 #### How does it work?
 
