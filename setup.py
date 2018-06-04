@@ -12,9 +12,9 @@ from setuptools import setup, find_packages
 setup(
     name='magicattr',
     version='0.1.0',
-    author='CodeLV',
+    author='frmdstryr',
     author_email='frmdstryr@gmail.com',
-    url='https://github.com/codelv/magicattr',
+    url='https://github.com/frmdstryr/magicattr',
     description='A getattr and setattr that works on nested objects, lists, '
                 'dicts, and any combination thereof without resorting to eval',
     license="MIT",

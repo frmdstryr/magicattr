@@ -1,6 +1,7 @@
 # Magicattr
 
 [![Build Status](https://travis-ci.org/frmdstryr/magicattr.svg?branch=master)](https://travis-ci.org/frmdstryr/magicattr)
+[![codecov](https://codecov.io/gh/frmdstryr/magicattr/branch/master/graph/badge.svg)](https://codecov.io/gh/frmdstryr/magicattr)
 
 
 A getattr and setattr that works on nested objects, lists, 
