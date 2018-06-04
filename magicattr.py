@@ -8,11 +8,13 @@ The full license is in the file LICENSE, distributed with this software.
 Created on June, 2018
 """
 import ast
+import sys
 from functools import reduce
 
 
 #: Types of AST nodes that are used
 _AST_TYPES = (ast.Name, ast.Attribute, ast.Subscript, ast.Call)
+_STRING_TYPE = basestring if sys.version_info.major == 2 else str
 
 
 def get(obj, attr):
@@ -62,7 +64,7 @@ def set(obj, attr, val):
         return
     elif isinstance(node, ast.Name):
         return setattr(obj, node.id, val)
-    raise NotImplementedError("Node is not supported: %s"%node)
+    raise NotImplementedError("Node is not supported: %s" % node)
 
 
 def delete(obj, attr):
@@ -90,7 +92,7 @@ def delete(obj, attr):
         return
     elif isinstance(node, ast.Name):
         return delattr(obj, node.id)
-    raise NotImplementedError("Node is not supported: %s"%node)
+    raise NotImplementedError("Node is not supported: %s" % node)
 
 
 def _parse(attr):
@@ -106,10 +108,13 @@ def _parse(attr):
         List of ast nodes
     
     """
-    node = ast.parse(attr).body[0]
-    if not isinstance(node, ast.Expr):
-        raise ValueError("Invalid expression: {}".format(attr))
-    return reversed([n for n in ast.walk(node) if isinstance(n, _AST_TYPES)])
+    if not isinstance(attr, _STRING_TYPE):
+        raise TypeError("Attribute name must be a string")
+    nodes = ast.parse(attr).body
+    if not nodes or not isinstance(nodes[0], ast.Expr):
+        raise ValueError("Invalid expression: %s"%attr)
+    return reversed([n for n in ast.walk(nodes[0])
+                     if isinstance(n, _AST_TYPES)])
 
 
 def _lookup_subscript_value(node):
@@ -138,7 +143,7 @@ def _lookup_subscript_value(node):
           and isinstance(node.operand, ast.Num)):
         return -node.operand.n
     raise NotImplementedError("Subscript node is not supported: "
-                              "%s"%ast.dump(node))
+                              "%s" % ast.dump(node))
 
 
 def _lookup(obj, node):
@@ -164,4 +169,4 @@ def _lookup(obj, node):
         return getattr(obj, node.id)
     elif isinstance(node, ast.Call):
         raise ValueError("Function calls are not allowed.")
-    raise NotImplementedError("Node is not supported: %s"%node)
+    raise NotImplementedError("Node is not supported: %s" % node)

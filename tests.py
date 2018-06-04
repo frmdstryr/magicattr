@@ -115,3 +115,21 @@ def test_person_example():
     # Must be an expression
     with pytest.raises(IndexError):
         magicattr.get(bob, 'friends[100]')
+
+
+def test_empty():
+    obj = Test()
+    with pytest.raises(ValueError):
+       magicattr.get(obj,"   ")
+
+    with pytest.raises(ValueError):
+        magicattr.get(obj,"")
+
+    with pytest.raises(TypeError):
+        magicattr.get(obj, 0)
+
+    with pytest.raises(TypeError):
+        magicattr.get(obj, None)
+
+    with pytest.raises(TypeError):
+        magicattr.get(obj, obj)
