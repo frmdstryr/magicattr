@@ -50,21 +50,11 @@ def set(obj, attr, val):
         The value to set
         
     """
-    nodes = tuple(_parse(attr))
-    if len(nodes) > 1:
-        obj = reduce(_lookup, nodes[:-1], obj)
-        node = nodes[-1]
+    obj, attr_or_key, is_subscript = lookup(obj, attr)
+    if is_subscript:
+        obj[attr_or_key] = val
     else:
-        node = nodes[0]
-
-    if isinstance(node, ast.Attribute):
-        return setattr(obj, node.attr, val)
-    elif isinstance(node, ast.Subscript):
-        obj[_lookup_subscript_value(node.slice.value)] = val
-        return
-    elif isinstance(node, ast.Name):
-        return setattr(obj, node.id, val)
-    raise NotImplementedError("Node is not supported: %s" % node)
+        setattr(obj, attr_or_key, val)
 
 
 def delete(obj, attr):
@@ -78,20 +68,44 @@ def delete(obj, attr):
     attr: String
         A attribute string to lookup
     """
+    obj, attr_or_key, is_subscript = lookup(obj, attr)
+    if is_subscript:
+        del obj[attr_or_key]
+    else:
+        delattr(obj, attr_or_key)
+
+
+def lookup(obj, attr):
+    """ Like get but instead of returning the final value it returns the 
+    object and action that will be done. This is useful if you need to do
+    any final checking (such as type validation) before doing a final setattr
+    or delattr.
+    
+    Parameters
+    ----------
+    obj: Object
+        An object to lookup the attribute on
+    attr: String
+        A attribute string to lookup
+        
+    Returns
+    -------
+    result: Tuple[Object, String, Bool]
+    _   A tuple of the object, the attribute, dict key, or list index that 
+        will be used, and whether the former is a subscript operation.
+    """
     nodes = tuple(_parse(attr))
     if len(nodes) > 1:
         obj = reduce(_lookup, nodes[:-1], obj)
         node = nodes[-1]
     else:
         node = nodes[0]
-
     if isinstance(node, ast.Attribute):
-        return delattr(obj, node.attr)
+        return obj, node.attr, False
     elif isinstance(node, ast.Subscript):
-        del obj[_lookup_subscript_value(node.slice.value)]
-        return
+        return obj, _lookup_subscript_value(node.slice.value), True
     elif isinstance(node, ast.Name):
-        return delattr(obj, node.id)
+        return obj, node.id, False
     raise NotImplementedError("Node is not supported: %s" % node)
 
 
