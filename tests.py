@@ -60,6 +60,11 @@ def test_person_example():
     # Nothing new
     assert magicattr.get(bob, 'age') == 31
 
+    # Default value (optional)
+    with pytest.raises(AttributeError) as e:
+        magicattr.get(bob, 'weight')
+    assert magicattr.get(bob, 'weight', default=75) == 75
+
     # Lists
     assert magicattr.get(jill, 'friends[0].name') == 'Bob'
     assert magicattr.get(jack, 'friends[-1].age') == 29
