@@ -17,7 +17,7 @@ _AST_TYPES = (ast.Name, ast.Attribute, ast.Subscript, ast.Call)
 _STRING_TYPE = basestring if sys.version_info.major == 2 else str
 
 
-def get(obj, attr):
+def get(obj, attr, **kwargs):
     """ A getattr that supports nested lookups on objects, dicts, lists, and
     any combination in between.
     
@@ -27,13 +27,24 @@ def get(obj, attr):
         An object to lookup the attribute on
     attr: String
         A attribute string to lookup
-        
+    kwargs:
+        default: Any
+            A default value used as a fallback if attr doesn't exist
+
     Returns
     -------
     result: Object
-        The object retrieved
+        The object retrieved or the default fallback value, if it was passed
     """
-    return reduce(_lookup, _parse(attr), obj)
+    for chunk in _parse(attr):
+        try:
+            obj = _lookup(obj, chunk)
+        except Exception as ex:
+            if "default" in kwargs:
+                return kwargs["default"]
+            else:
+                raise ex
+    return obj
 
 
 def set(obj, attr, val):
