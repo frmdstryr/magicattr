@@ -1,16 +1,19 @@
+name: CI
+on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ '2.x', '3.x']
+        python-version: [ '2.7', '3.6', '3.7', '3.8', '3.9', '3.10' ]
     name: Test ${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v2
-      - name: Install
+      - name: Setup
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Install
         run: |
          pip install pytest pytest-coverage codecov
          pip install -e ./
