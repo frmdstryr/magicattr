@@ -156,6 +156,8 @@ def _lookup_subscript_value(node):
     result: Object
         The object retrieved
     """
+    if isinstance(node, ast.Index):
+        node = node.value  # For backwards compatibility
     # Handle indexes
     if isinstance(node, ast.Num):
         return node.n
