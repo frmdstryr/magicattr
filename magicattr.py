@@ -1,5 +1,5 @@
 """
-Copyright (c) 2018, Jairus Martin.
+Copyright (c) 2018-2022, Jairus Martin.
 
 Distributed under the terms of the MIT License.
 
@@ -18,9 +18,9 @@ _STRING_TYPE = basestring if sys.version_info.major == 2 else str
 
 
 def get(obj, attr, **kwargs):
-    """ A getattr that supports nested lookups on objects, dicts, lists, and
+    """A getattr that supports nested lookups on objects, dicts, lists, and
     any combination in between.
-    
+
     Parameters
     ---------
     obj: Object
@@ -48,9 +48,9 @@ def get(obj, attr, **kwargs):
 
 
 def set(obj, attr, val):
-    """ A setattr that supports nested lookups on objects, dicts, lists, and
+    """A setattr that supports nested lookups on objects, dicts, lists, and
     any combination in between.
-    
+
     Parameters
     ---------
     obj: Object
@@ -59,7 +59,7 @@ def set(obj, attr, val):
         A attribute string to lookup
     val: Object
         The value to set
-        
+
     """
     obj, attr_or_key, is_subscript = lookup(obj, attr)
     if is_subscript:
@@ -69,9 +69,9 @@ def set(obj, attr, val):
 
 
 def delete(obj, attr):
-    """ A delattr that supports deletion of a nested lookups on objects, 
+    """A delattr that supports deletion of a nested lookups on objects,
     dicts, lists, and any combination in between.
-    
+
     Parameters
     ---------
     obj: Object
@@ -87,22 +87,22 @@ def delete(obj, attr):
 
 
 def lookup(obj, attr):
-    """ Like get but instead of returning the final value it returns the 
+    """Like get but instead of returning the final value it returns the
     object and action that will be done. This is useful if you need to do
     any final checking (such as type validation) before doing a final setattr
     or delattr.
-    
+
     Parameters
     ----------
     obj: Object
         An object to lookup the attribute on
     attr: String
         A attribute string to lookup
-        
+
     Returns
     -------
     result: Tuple[Object, String, Bool]
-    _   A tuple of the object, the attribute, dict key, or list index that 
+    _   A tuple of the object, the attribute, dict key, or list index that
         will be used, and whether the former is a subscript operation.
     """
     nodes = tuple(_parse(attr))
@@ -121,37 +121,36 @@ def lookup(obj, attr):
 
 
 def _parse(attr):
-    """ Parse and validate an attr string 
-    
+    """Parse and validate an attr string
+
     Parameters
     ----------
     attr: String
-    
+
     Returns
     -------
     nodes: List
         List of ast nodes
-    
+
     """
     if not isinstance(attr, _STRING_TYPE):
         raise TypeError("Attribute name must be a string")
     nodes = ast.parse(attr).body
     if not nodes or not isinstance(nodes[0], ast.Expr):
-        raise ValueError("Invalid expression: %s"%attr)
-    return reversed([n for n in ast.walk(nodes[0])
-                     if isinstance(n, _AST_TYPES)])
+        raise ValueError("Invalid expression: %s" % attr)
+    return reversed([n for n in ast.walk(nodes[0]) if isinstance(n, _AST_TYPES)])
 
 
 def _lookup_subscript_value(node):
-    """ Lookup the value of ast node on the object.
-    
+    """Lookup the value of ast node on the object.
+
     Parameters
     ---------
     obj: Object
         An object to lookup the attribute, index, or key
     node: ast.Attribute, ast.Name, or ast.Subscript
         Node to lookup
-        
+
     Returns
     -------
     result: Object
@@ -164,23 +163,25 @@ def _lookup_subscript_value(node):
     elif isinstance(node, ast.Str):
         return node.s
     # Handle negative indexes
-    elif (isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub)
-          and isinstance(node.operand, ast.Num)):
+    elif (
+        isinstance(node, ast.UnaryOp)
+        and isinstance(node.op, ast.USub)
+        and isinstance(node.operand, ast.Num)
+    ):
         return -node.operand.n
-    raise NotImplementedError("Subscript node is not supported: "
-                              "%s" % ast.dump(node))
+    raise NotImplementedError("Subscript node is not supported: " "%s" % ast.dump(node))
 
 
 def _lookup(obj, node):
-    """ Lookup the given ast node on the object.
-    
+    """Lookup the given ast node on the object.
+
     Parameters
     ---------
     obj: Object
         An object to lookup the attribute, index, or key
     node: ast.Attribute, ast.Name, or ast.Subscript
         Node to lookup
-        
+
     Returns
     -------
     result: Object

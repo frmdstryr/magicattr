@@ -1,13 +1,13 @@
 # Magicattr
 
-[![Build Status](https://travis-ci.org/frmdstryr/magicattr.svg?branch=master)](https://travis-ci.org/frmdstryr/magicattr)
+[![status](https://github.com/frmdstryr/magicattr/actions/workflows/ci.yml/badge.svg)](https://github.com/frmdstryr/magicattr/actions)
 [![codecov](https://codecov.io/gh/frmdstryr/magicattr/branch/master/graph/badge.svg)](https://codecov.io/gh/frmdstryr/magicattr)
 
 
-A getattr and setattr that works on nested objects, lists, 
+A getattr and setattr that works on nested objects, lists,
 dictionaries, and any combination thereof without resorting to eval.
 
-It differs from getattr and setattr in that it retains the failure cause 
+It differs from getattr and setattr in that it retains the failure cause
 instead of always raising an AttributeError.
 
 
@@ -96,7 +96,7 @@ with pytest.raises(NotImplementedError) as e:
 
 with pytest.raises(SyntaxError) as e:
     magicattr.get(bob, 'friends[')
-    
+
 with pytest.raises(ValueError) as e:
     magicattr.get(bob, 'friends = [1,1]')
 
@@ -117,7 +117,7 @@ Slicing, expressions, function calls, append/pop from lists, eval stuff, etc...
 #### How does it work?
 
 Parses the attr string into an ast node and manually evaluates it.
-  
+
 
 ### Installing
 
