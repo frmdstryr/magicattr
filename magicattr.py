@@ -114,7 +114,7 @@ def lookup(obj, attr):
     if isinstance(node, ast.Attribute):
         return obj, node.attr, False
     elif isinstance(node, ast.Subscript):
-        return obj, _lookup_subscript_value(node.slice.value), True
+        return obj, _lookup_subscript_value(node.slice), True
     elif isinstance(node, ast.Name):
         return obj, node.id, False
     raise NotImplementedError("Node is not supported: %s" % node)
@@ -189,7 +189,7 @@ def _lookup(obj, node):
     if isinstance(node, ast.Attribute):
         return getattr(obj, node.attr)
     elif isinstance(node, ast.Subscript):
-        return obj[_lookup_subscript_value(node.slice.value)]
+        return obj[_lookup_subscript_value(node.slice)]
     elif isinstance(node, ast.Name):
         return getattr(obj, node.id)
     elif isinstance(node, ast.Call):
