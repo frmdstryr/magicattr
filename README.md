@@ -2,6 +2,7 @@
 
 [![status](https://github.com/frmdstryr/magicattr/actions/workflows/ci.yml/badge.svg)](https://github.com/frmdstryr/magicattr/actions)
 [![codecov](https://codecov.io/gh/frmdstryr/magicattr/branch/master/graph/badge.svg)](https://codecov.io/gh/frmdstryr/magicattr)
+[![Downloads](https://pepy.tech/badge/magicattr/month)](https://pepy.tech/project/magicattr)
 
 
 A getattr and setattr that works on nested objects, lists,
