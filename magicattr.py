@@ -142,14 +142,12 @@ def _parse(attr):
 
 
 def _lookup_subscript_value(node):
-    """Lookup the value of ast node on the object.
+    """Lookup the value of ast node.
 
     Parameters
     ---------
-    obj: Object
-        An object to lookup the attribute, index, or key
-    node: ast.Attribute, ast.Name, or ast.Subscript
-        Node to lookup
+    node: ast.Constant, ast.Index, ast.UnaryOp
+        Node to lookup the value of
 
     Returns
     -------
@@ -158,19 +156,16 @@ def _lookup_subscript_value(node):
     """
     if isinstance(node, ast.Index):
         node = node.value  # For backwards compatibility
-    # Handle indexes
-    if isinstance(node, ast.Num):
-        return node.n
-    # Handle string keys
-    elif isinstance(node, ast.Str):
-        return node.s
+    # Handle indexes and string keys
+    if isinstance(node, ast.Constant):
+        return node.value
     # Handle negative indexes
     elif (
         isinstance(node, ast.UnaryOp)
         and isinstance(node.op, ast.USub)
-        and isinstance(node.operand, ast.Num)
+        and isinstance(node.operand, ast.Constant)
     ):
-        return -node.operand.n
+        return -node.operand.value
     raise NotImplementedError("Subscript node is not supported: " "%s" % ast.dump(node))
 
 
