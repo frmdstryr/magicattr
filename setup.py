@@ -11,7 +11,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="magicattr",
-    version="0.1.6",
+    version="0.1.7",
     author="frmdstryr",
     author_email="frmdstryr@gmail.com",
     url="https://github.com/frmdstryr/magicattr",
